@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Descontos em Peças</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100px;
+    }
+
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Calculadora de Descontos em Peças</h1>
+  <div>
+    <label for="quantidadePecas">Quantidade de Peças:</label>
+    <input type="number" id="quantidadePecas">
+  </div>
+  <div>
+    <button onclick="calcularDescontos()">Calcular Descontos</button>
+  </div>
+  <div id="resultado"></div>
+
+  <script>
+    function obterValorInput(mensagem) {
+      try {
+        let valorInput = prompt(mensagem).replace(",", ".");
+        return parseFloat(valorInput);
+      } catch (error) {
+        console.log("Por favor, insira um número válido.");
+        return obterValorInput(mensagem);
+      }
+    }
+
+    function calcularDescontoPeca(valorBruto, percentualDesconto) {
+      let baseCalculo = valorBruto * percentualDesconto / 100;
+      let valorRealDesconto = baseCalculo;
+      let resultadoFinal = valorBruto - valorRealDesconto;
+      return [baseCalculo, valorRealDesconto, resultadoFinal];
+    }
+
+    function calcularDescontos() {
+      let quantidadePecas = parseInt(document.getElementById("quantidadePecas").value);
+      let numeroParcelas = obterValorInput("Digite o número de parcelas: ");
+
+      let totalBruto = 0;
+      let totalDesconto = 0;
+
+      let resultadoHTML = "<h2>Resultados:</h2>";
+
+      for (let i = 1; i <= quantidadePecas; i++) {
+        let valorBruto = obterValorInput(`Digite o valor bruto para a peça ${i}:`);
+        let percentualDesconto = obterValorInput(`Digite o percentual de desconto para a peça ${i}:`);
+
+        let [baseCalculo, valorRealDesconto, resultadoFinal] = calcularDescontoPeca(valorBruto, percentualDesconto);
+
+        resultadoHTML += `<p>Peça ${i}:</p>`;
+        resultadoHTML += `<p>   - Base de Cálculo: $${valorBruto.toFixed(2)} × ${percentualDesconto.toFixed(2)}% = $${baseCalculo.toFixed(2)}</p>`;
+        resultadoHTML += `<p>   - Valor Real do Desconto: $${valorRealDesconto.toFixed(2)}</p>`;
+        resultadoHTML += `<p>   - Resultado Final: $${resultadoFinal.toFixed(2)} dividido em ${numeroParcelas} parcelas de $${(resultadoFinal / numeroParcelas).toFixed(2)}</p>`;
+
+        totalBruto += valorBruto;
+        totalDesconto += valorRealDesconto;
+      }
+
+      let valorFinal = totalBruto - totalDesconto;
+      resultadoHTML += "<h3>Total Geral:</h3>";
+      resultadoHTML += `<p>   - Valor Total Bruto: $${totalBruto.toFixed(2)}</p>`;
+      resultadoHTML += `<p>   - Valor Total Desconto: $${totalDesconto.toFixed(2)}</p>`;
+      resultadoHTML += `<p>   - Valor Final: $${valorFinal.toFixed(2)} dividido em ${numeroParcelas} parcelas de $${(valorFinal / numeroParcelas).toFixed(2)}</p>`;
+
+      document.getElementById("resultado").innerHTML = resultadoHTML;
+    }
+  </script>
+</body>
+
+</html>
